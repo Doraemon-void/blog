@@ -6,9 +6,22 @@
  * string describes *who this blog belongs to*, it lives here.
  */
 
-/** Canonical origin. Set NEXT_PUBLIC_SITE_URL in the deploy environment. */
+/**
+ * Canonical origin. Set NEXT_PUBLIC_SITE_URL in the deploy environment.
+ *
+ * The fallback is deliberately `localhost` rather than a plausible-looking
+ * domain. It used to be `https://dora.dev` — a placeholder, but one that reads
+ * as real, so a production build that forgot the variable would advertise a
+ * domain this site does not own as the canonical URL of every page, in the
+ * sitemap, the RSS feed and every OG tag. Nobody notices that until a search
+ * engine has already indexed it. `localhost` cannot ship unnoticed, and
+ * `next.config.ts` prints a warning when a production build runs without the
+ * variable set.
+ */
+const FALLBACK_SITE_URL = "http://localhost:3000";
+
 export const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://dora.dev"
+  process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL
 ).replace(/\/$/, "");
 
 export const site = {
@@ -41,8 +54,13 @@ export const site = {
 
   author: {
     name: "Dora",
+    /**
+     * TODO(identity) — `email` is still the template's placeholder and the
+     * mailbox does not exist. It reaches readers through the footer link, the
+     * About page and `personJsonLd`, so replacing it is part of going live.
+     */
     email: "hello@dora.dev",
-    github: "https://github.com/dora",
+    github: "https://github.com/Doraemon-void",
   },
 
   /** Spec §39 / §85 — kept dry on purpose. */

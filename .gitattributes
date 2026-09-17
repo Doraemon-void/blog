@@ -1,0 +1,7 @@
+# 仓库里的文本一律按 LF 存储。
+#
+# 对 deploy/ 下的文件这不只是代码风格问题：systemd 读到带 CRLF 的 unit 文件会报
+# 出一句很难懂的 "Invalid argument"，nginx 的配置同理。显式写 eol=lf 之后，文件
+# 从仓库里取出来一定是 LF，不依赖克隆者的 core.autocrlf 设置 —— 也就是说不管是
+# 从 Windows 还是 Linux 克隆，拷到服务器上都不会因为换行符炸掉。
+deploy/* text eol=lf

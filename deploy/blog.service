@@ -1,0 +1,39 @@
+# Dora 博客的常驻服务（systemd unit）
+#
+# 装法（在服务器上，仓库根目录里执行）：
+#   sudo cp deploy/blog.service /etc/systemd/system/blog.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now blog
+#
+# 看状态：  sudo systemctl status blog
+# 看日志：  sudo journalctl -u blog -f
+# 重启：    sudo systemctl restart blog
+
+[Unit]
+Description=Dora Blog (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+
+# 用专用的普通用户跑，不用 root —— Node 进程万一被打穿，影响面小一点。
+User=blog
+Group=blog
+
+# 必须是仓库根目录：next start 要在这里找 .next 和 content/。
+WorkingDirectory=/home/blog/blog
+
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# 绝对路径是必须的 —— systemd 不读 PATH，直接写 npm 会报找不到命令。
+# 如果你装 Node 的方式和 deploy/README.md 里写的不一样，
+# 先用 `which npm` 看一眼真实路径，再改这一行。
+ExecStart=/usr/local/bin/npm run start
+
+# 进程挂了自动拉起来（5 秒后重试）。服务器重启后靠 [Install] 自动开机启动。
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

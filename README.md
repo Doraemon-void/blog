@@ -228,8 +228,16 @@ pyftsubset fusion-pixel-12px-proportional-zh_hans.ttf.woff2 \
 NEXT_PUBLIC_SITE_URL=https://你的域名
 ```
 
-它决定 canonical URL、OG、RSS 和 sitemap 里的绝对地址。未设置时回退到
-`lib/site.config.ts` 里的默认值。
+它决定 canonical URL、OG、RSS 和 sitemap 里的绝对地址。
+
+**不设置它，构建出来的站点会把自己的地址写成 `http://localhost:3000`** ——
+并且 `next build` / `next start` 会打印一条警告提醒你。回退值故意选成 `localhost`
+而不是某个像真域名的占位符：这样万一忘了设置，站点是"明显不对"而不是"看起来像对的"，
+不会等到搜索引擎已经收录错域名才发现。
+
+作者本人的邮箱和 GitHub 账号在 `lib/site.config.ts` 的 `author` 里，它们决定页头 GH
+按钮、页脚链接和 JSON-LD 里的作者信息。邮箱目前还是模板占位值（见文件里的
+`TODO(identity)`），上线前请换掉。
 
 改站点名字、导航、社交链接、Currently 面板、Tech Stack、Timeline —— 全部只改
 `lib/site.config.ts`。
