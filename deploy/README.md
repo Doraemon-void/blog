@@ -74,10 +74,17 @@ npm -v     # 期望 11.x
 
 不换的话在国内服务器上 `npm ci` 会慢到怀疑人生，还经常中途超时失败。
 
+**注意要写成全局配置**：`npm config set registry`（不带 `--global`）只写进当前用户的
+`~/.npmrc`。而装 Node 这步是 root 在跑，待会儿真正执行 `npm ci` 的却是 `blog` 用户 ——
+写进 root 的家目录等于没设。所以直接写 npm 的全局配置文件：
+
 ```bash
-npm config set registry https://registry.npmmirror.com
-npm config get registry   # 应输出 https://registry.npmmirror.com
+echo 'registry=https://registry.npmmirror.com' | sudo tee /usr/local/etc/npmrc
+npm config get registry   # 期望 https://registry.npmmirror.com
 ```
+
+`/usr/local/etc/npmrc` 跟着 Node 的安装前缀走（Node 装在 /usr/local），所以这台机器上
+所有用户都会读到它。
 
 ### 5. 建一个专用用户，把仓库克隆下来
 
@@ -85,7 +92,7 @@ npm config get registry   # 应输出 https://registry.npmmirror.com
 
 ```bash
 sudo apt update && sudo apt install -y git
-sudo useradd -m -s /bin/bash blog
+sudo useradd -m -s /bin/bash blog       # 已经有 blog 用户就跳过这一行（id blog 看一下）
 sudo su - blog          # ← 切到 blog 用户，后面的仓库操作都在这个身份下做
 ```
 
